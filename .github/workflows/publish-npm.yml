@@ -1,9 +1,10 @@
 name: Publish to npm
 
-# Triggered by publishing a GitHub Release (create the release with a tag like
-# v0.1.1 — the leading "v" is stripped and used to set package.json's version
-# before publishing, so the release tag is always the single source of truth
-# for what gets published; no separate manual "bump version" step to forget).
+# Triggered by publishing a GitHub Release (create the release with a tag
+# containing an X.Y.Z version, e.g. v0.1.1). The X.Y.Z is extracted from the
+# tag and used to set package.json's version before publishing, so the
+# release tag is always the single source of truth for what gets published;
+# no separate manual "bump version" step to forget.
 #
 # Requires a repository secret NPM_TOKEN: an npm "Automation" access token
 # (npmjs.com > Access Tokens > Generate New Token > Automation), scoped to an
@@ -30,7 +31,15 @@ jobs:
       - run: npm ci
 
       - name: Set package version from the release tag
-        run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version --allow-same-version
+        # Extract the first X.Y.Z found in the tag rather than just stripping a
+        # leading "v" — tolerates "v0.1.0", "V0.1.0", "V.0.1.0", "release-0.1.0", etc.
+        run: |
+          VERSION=$(echo "$GITHUB_REF_NAME" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          if [ -z "$VERSION" ]; then
+            echo "Could not find an X.Y.Z version in release tag '$GITHUB_REF_NAME'." >&2
+            exit 1
+          fi
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
 
       - run: npm run build
 
