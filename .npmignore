@@ -1,0 +1,8 @@
+resources/glpi-openapi-full.json
+*.ts
+!*.d.ts
+tsconfig.json
+gulpfile.js
+node_modules
+.git
+*.map

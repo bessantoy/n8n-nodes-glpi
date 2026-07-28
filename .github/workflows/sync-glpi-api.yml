@@ -1,0 +1,93 @@
+name: Sync GLPI API spec
+
+# Periodically checks the configured GLPI instance for a changed OpenAPI spec
+# (new API version, new endpoints, changed schemas...), and opens a pull
+# request with the regenerated resources/glpi-openapi-full.json and
+# resources/glpi-endpoints-index.json when something changed. Never merges
+# automatically — a human always reviews the diff and the validation report
+# before merging.
+#
+# Requires a repository secret GLPI_DOC_JSON_URL pointing at the raw OpenAPI
+# JSON document of a reachable GLPI instance (the *.json* doc endpoint, e.g.
+# https://<your-instance>/api.php/v2.3.0/doc.json — NOT the HTML Swagger page
+# at .../doc). The real hostname is normalized away by
+# scripts/fetch-and-normalize-spec.js before anything is written to the repo,
+# so it never appears in a commit — do not remove that step.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # every Monday at 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - name: Fetch and normalize the live GLPI API spec
+        id: fetch
+        env:
+          GLPI_DOC_JSON_URL: ${{ secrets.GLPI_DOC_JSON_URL }}
+        run: |
+          set +e
+          node scripts/fetch-and-normalize-spec.js
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Regenerate index, validate, and prepare the PR body
+        if: steps.fetch.outputs.exit_code == '2'
+        id: validate
+        run: |
+          npm run generate:index
+          npm run build
+
+          set +e
+          npm run validate:endpoints > validate-report.txt 2>&1
+          VALIDATE_EXIT=$?
+          set -e
+
+          {
+            echo "Automated sync of the GLPI High-Level REST API spec (\`resources/glpi-openapi-full.json\`) and regenerated index (\`resources/glpi-endpoints-index.json\`)."
+            echo ""
+            if [ "$VALIDATE_EXIT" -eq 0 ]; then
+              echo "**Validation: passed** — no known breakage detected."
+            else
+              echo "**Validation: FAILED** — review and fix before merging (see details below)."
+            fi
+            echo ""
+            echo "<details><summary>npm run validate:endpoints output</summary>"
+            echo ""
+            echo '```'
+            cat validate-report.txt
+            echo '```'
+            echo "</details>"
+            echo ""
+            echo "This PR is never auto-merged — review the spec/index diff before merging."
+          } > pr-body.md
+
+          echo "validate_exit_code=$VALIDATE_EXIT" >> "$GITHUB_OUTPUT"
+
+      - name: Open pull request
+        if: steps.fetch.outputs.exit_code == '2'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: 'chore: sync GLPI API spec'
+          title: >-
+            chore: sync GLPI API spec (validation
+            ${{ steps.validate.outputs.validate_exit_code == '0' && 'passed' || 'FAILED' }})
+          branch: sync-glpi-api-spec
+          labels: glpi-api-sync
+          body-path: pr-body.md
+          add-paths: |
+            resources/glpi-openapi-full.json
+            resources/glpi-endpoints-index.json

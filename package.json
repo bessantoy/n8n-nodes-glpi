@@ -1,0 +1,58 @@
+{
+  "name": "n8n-nodes-glpi",
+  "version": "0.1.0",
+  "description": "Node n8n complet pour piloter l'API REST de GLPI (tickets, assets, changes, problems, projects, recherche, gestion de session, etc.)",
+  "keywords": [
+    "n8n-community-node-package",
+    "glpi",
+    "itsm",
+    "helpdesk"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/bessantoy/n8n-nodes-glpi",
+  "author": {
+    "name": "Anthony Bessieres",
+    "email": "anthony.bessieres@it-gouvernance.fr"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bessantoy/n8n-nodes-glpi.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials scripts --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "generate:index": "node scripts/generate-endpoint-index.js",
+    "validate:endpoints": "node scripts/validate-endpoint-update.js",
+    "prepublishOnly": "npm run build && npm run lint"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/GlpiOAuth2Api.credentials.js",
+      "dist/credentials/GlpiPasswordApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Glpi/Glpi.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.0",
+    "gulp": "^4.0.2",
+    "n8n-workflow": "^1.60.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.4.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}
