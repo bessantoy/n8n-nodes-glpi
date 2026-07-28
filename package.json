@@ -19,6 +19,9 @@
     "url": "https://github.com/bessantoy/n8n-nodes-glpi.git"
   },
   "main": "index.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
