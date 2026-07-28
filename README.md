@@ -11,10 +11,9 @@ Le package fournit un seul node, **GLPI (Generic)**, capable d'appeler n'importe
 - [Authentification](#authentification)
 - [Utilisation](#utilisation)
 - [Exemples](#exemples)
-- [Architecture technique](#architecture-technique)
 - [Mettre à jour vers une nouvelle version de l'API GLPI](#mettre-à-jour-vers-une-nouvelle-version-de-lapi-glpi)
 - [Développement local](#développement-local)
-- [Limites connues](#limites-connues)
+- [Publication npm](#publication-npm)
 
 ## Prérequis
 
@@ -23,7 +22,7 @@ Le package fournit un seul node, **GLPI (Generic)**, capable d'appeler n'importe
 
 ## Installation
 
-Depuis n8n : **Settings > Community Nodes > Install**, renseigner `n8n-nodes-glpi`. Pour le dev local, voir [Développement local](#développement-local).
+Depuis n8n : **Settings > Community Nodes > Install**, renseigner `@bessantoy/n8n-nodes-glpi`. Pour le dev local, voir [Développement local](#développement-local).
 
 ## Authentification
 
@@ -72,7 +71,7 @@ npm install
 npm run build
 ```
 
-Pour tester dans n8n : `npm link`, puis dans `~/.n8n/custom` : `npm link n8n-nodes-glpi`, et redémarrer n8n.
+Pour tester dans n8n : `npm link`, puis dans `~/.n8n/custom` : `npm link @bessantoy/n8n-nodes-glpi`, et redémarrer n8n.
 
 ```bash
 npm run dev                 # tsc --watch
@@ -80,6 +79,15 @@ npm run format               # prettier --write
 npm run generate:index       # régénère l'index depuis le spec OpenAPI
 npm run validate:endpoints   # vérifie l'index régénéré
 ```
+
+## Publication npm
+
+Le package est publié sous le scope **`@bessantoy/n8n-nodes-glpi`** (public, `publishConfig.access: "public"`), via `.github/workflows/publish-npm.yml` :
+
+1. Créer une **Release GitHub** avec un tag `vX.Y.Z` (ex. `v0.1.1`) — c'est ce geste qui déclenche la publication, jamais un push direct. Pas besoin de bump manuel de version dans `package.json` : le workflow aligne automatiquement la version sur le tag avant de publier.
+2. Le workflow rebuild, exécute `validate:endpoints`, puis `npm publish`.
+
+Nécessite le secret de dépôt **`NPM_TOKEN`** (npmjs.com > Access Tokens > Generate New Token > **Automation**, sur le compte propriétaire du scope `@bessantoy`).
 
 ## Licence
 

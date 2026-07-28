@@ -1,5 +1,5 @@
 {
-  "name": "n8n-nodes-glpi",
+  "name": "@bessantoy/n8n-nodes-glpi",
   "version": "0.1.0",
   "description": "Node n8n complet pour piloter l'API REST de GLPI (tickets, assets, changes, problems, projects, recherche, gestion de session, etc.)",
   "keywords": [
@@ -27,11 +27,14 @@
     "lintfix": "eslint nodes credentials package.json --fix",
     "generate:index": "node scripts/generate-endpoint-index.js",
     "validate:endpoints": "node scripts/validate-endpoint-update.js",
-    "prepublishOnly": "npm run build && npm run lint"
+    "prepublishOnly": "npm run build && npm run validate:endpoints"
   },
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
