@@ -1,6 +1,7 @@
 # n8n-nodes-glpi
 
-*[IT GOUVERNANCE]([README.fr.md](https://www.it-gouvernance.fr/))*
+*[IT GOUVERNANCE](https://www.it-gouvernance.fr/)*
+
 *[Lire en français](README.fr.md)*
 
 This package adds a **GLPI API** node to [n8n](https://n8n.io) to connect your workflows to **GLPI**, the open source IT service and asset management tool (tickets, computers, users, projects, entities, etc.).
@@ -72,4 +73,4 @@ This package is open source. For local development, updating the endpoint list o
 
 MIT
 
-*[IT GOUVERNANCE]([README.fr.md](https://www.it-gouvernance.fr/))*
+*[IT GOUVERNANCE](https://www.it-gouvernance.fr/)*
