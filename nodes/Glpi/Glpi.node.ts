@@ -77,7 +77,7 @@ const PATH_PARAMETER_PROPERTIES: INodeProperties[] =
 // via a Category -> Route cascade driven by the bundled endpoint index.
 export class Glpi implements INodeType {
   description: INodeTypeDescription = {
-    displayName: "GLPI (Generic)",
+    displayName: "GLPI API",
     name: "glpi",
     icon: "file:glpi.svg",
     group: ["transform"],
@@ -85,7 +85,7 @@ export class Glpi implements INodeType {
     subtitle: '={{$parameter["route"]}}',
     description: "Call any endpoint of the GLPI High-Level REST API (v2.3).",
     defaults: {
-      name: "GLPI (Generic)",
+      name: "GLPI API",
     },
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],

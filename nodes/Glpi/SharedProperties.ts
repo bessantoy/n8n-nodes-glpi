@@ -1,6 +1,6 @@
 import type { INodeProperties, INodeTypeDescription } from "n8n-workflow";
 
-// Shared building blocks used by the GLPI (Generic) node.
+// Shared building blocks used by the GLPI API node.
 
 export const GLPI_CREDENTIALS: NonNullable<
   INodeTypeDescription["credentials"]
