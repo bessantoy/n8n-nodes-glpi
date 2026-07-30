@@ -193,6 +193,11 @@ export function listRoutesForCategory(
     );
 }
 
+/** The full bundled index, unfiltered — used by SearchEngine.ts to score every endpoint. */
+export function listAllEntries(): EndpointEntry[] {
+  return loadIndex();
+}
+
 export function getEntry(
   entryPath: string,
   method: string,
