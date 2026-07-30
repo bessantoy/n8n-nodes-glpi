@@ -1,12 +1,14 @@
 {
   "name": "@bessantoy/n8n-nodes-glpi",
   "version": "0.1.0",
-  "description": "Node n8n complet pour piloter l'API REST de GLPI (tickets, assets, changes, problems, projects, recherche, gestion de session, etc.)",
+  "description": "n8n community nodes for the GLPI REST API: a generic node covering every endpoint, plus AI Agent / MCP tools to search and call endpoints dynamically.",
   "keywords": [
     "n8n-community-node-package",
     "glpi",
     "itsm",
-    "helpdesk"
+    "helpdesk",
+    "ai-agent",
+    "mcp"
   ],
   "license": "MIT",
   "homepage": "https://github.com/bessantoy/n8n-nodes-glpi",
@@ -29,6 +31,7 @@
     "lint": "eslint nodes credentials package.json",
     "lintfix": "eslint nodes credentials package.json --fix",
     "generate:index": "node scripts/generate-endpoint-index.js",
+    "generate:schemas": "node scripts/generate-schemas-index.js",
     "validate:endpoints": "node scripts/validate-endpoint-update.js",
     "prepublishOnly": "npm run build && npm run validate:endpoints"
   },
@@ -45,7 +48,9 @@
       "dist/credentials/GlpiPasswordApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/Glpi/Glpi.node.js"
+      "dist/nodes/Glpi/Glpi.node.js",
+      "dist/nodes/GlpiFindEndpoint/GlpiFindEndpoint.node.js",
+      "dist/nodes/GlpiExecuteEndpoint/GlpiExecuteEndpoint.node.js"
     ]
   },
   "devDependencies": {

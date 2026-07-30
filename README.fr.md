@@ -2,9 +2,11 @@
 
 *[Read this in English](README.md)*
 
-Ce package ajoute un node **GLPI API** à [n8n](https://n8n.io) pour connecter vos workflows à **GLPI**, l'outil open source de gestion de parc informatique et de support (tickets, ordinateurs, utilisateurs, projets, entités, etc.).
+Ce package connecte vos workflows [n8n](https://n8n.io) à **GLPI**, l'outil open source de gestion de parc informatique et de support (tickets, ordinateurs, utilisateurs, projets, entités, etc.), via l'API REST de GLPI.
 
-Un seul node suffit pour tout faire : créer un ticket, récupérer un utilisateur, mettre à jour un ordinateur... N'importe quelle action disponible dans l'API de GLPI est accessible via deux listes déroulantes — une **catégorie**, puis l'**action** précise — affichées exactement comme dans la documentation officielle de GLPI. Les champs à remplir (identifiant d'un ticket, informations à envoyer, etc.) changent automatiquement selon l'action choisie, sans avoir besoin d'écrire du JSON à la main (sauf si vous préférez).
+Il propose deux façons d'utiliser cette API :
+- Le node **GLPI API**, pour des workflows construits à la main : créer un ticket, récupérer un utilisateur, mettre à jour un ordinateur... N'importe quelle action disponible dans l'API de GLPI est accessible via deux listes déroulantes — une **catégorie**, puis l'**action** précise — affichées exactement comme dans la documentation officielle de GLPI. Les champs à remplir (identifiant d'un ticket, informations à envoyer, etc.) changent automatiquement selon l'action choisie, sans avoir besoin d'écrire du JSON à la main (sauf si vous préférez).
+- **GLPI: Find Endpoint** et **GLPI: Execute Endpoint**, pour un Agent IA ou un client MCP : l'agent décrit ce qu'il veut en langage naturel, récupère l'endpoint correspondant avec ses champs exacts, puis l'appelle — sans connaître l'API de GLPI au préalable. Voir [Outils Agent IA / MCP](#outils-agent-ia--mcp) plus bas.
 
 <p align="center">
   <img src="docs/images/node-in-canvas.png" alt="Le node GLPI API dans un workflow n8n" width="480">
@@ -15,8 +17,9 @@ Un seul node suffit pour tout faire : créer un ticket, récupérer un utilisate
 - [Prérequis](#prérequis)
 - [Installation](#installation)
 - [Authentification](#authentification)
-- [Utilisation](#utilisation)
-- [Exemples](#exemples)
+- [Node GLPI API — Utilisation](#node-glpi-api--utilisation)
+- [Node GLPI API — Exemples](#node-glpi-api--exemples)
+- [Outils Agent IA / MCP](#outils-agent-ia--mcp)
 - [Contribuer](#contribuer)
 
 ## Prérequis
@@ -37,7 +40,7 @@ Deux types de credential, au choix via le champ **Authentication** du node :
 
 **Context Options** (sur chaque requête) : GLPI Entity, GLPI Profile, GLPI Entity Recursive, Accept Language → headers `GLPI-Entity`, `GLPI-Profile`, `GLPI-Entity-Recursive`, `Accept-Language`.
 
-## Utilisation
+## Node GLPI API — Utilisation
 
 1. **Category** — la vraie catégorie GLPI (tag OpenAPI de l'endpoint), triée alphabétiquement comme la doc officielle.
 2. **Route** — méthode + chemin affichés ensemble (ex. `GET /Assistance/Ticket/{id}`), exactement comme dans la doc.
@@ -49,7 +52,7 @@ Deux types de credential, au choix via le champ **Authentication** du node :
   <img src="docs/images/node-parameters.png" alt="Panneau de paramètres du node : Category, Route, et les champs générés automatiquement" width="320">
 </p>
 
-## Exemples
+## Node GLPI API — Exemples
 
 **Récupérer un ticket**
 - Category: `Assistance` → Route: `GET /Assistance/Ticket/{id}` → champ **ID**: `1234`
@@ -62,6 +65,19 @@ Deux types de credential, au choix via le champ **Authentication** du node :
 - Category: `Assets` → Route: `POST /Assets/{asset_itemtype}/{asset_id}/OSInstallation`
 - Champ **Asset Itemtype**: `Computer` · Champ **Asset ID**: `1234`
 - Body : `{ "operatingsystems_id": 1 }`
+
+## Outils Agent IA / MCP
+
+Deux nodes supplémentaires, pensés pour être branchés sur un Agent IA ou un MCP Server Trigger plutôt que câblés à la main :
+
+<p align="center">
+  <img src="docs/images/mcp-tools.png" alt="GLPI: Find Endpoint et GLPI: Execute Endpoint branchés comme Tools sur un MCP Server Trigger" width="360">
+</p>
+
+- **GLPI: Find Endpoint** — prend une requête en langage naturel (`query`, ex. "créer un ticket") et renvoie l'endpoint (ou les endpoints) correspondant, avec leurs champs exacts, à partir des index bundlés (aucun appel à GLPI).
+- **GLPI: Execute Endpoint** — prend une `method` + `path` exactes (celles renvoyées par Find Endpoint) plus `queryParams`/`body` optionnels, et appelle GLPI. Partage le même credential **Authentication** que le node GLPI API.
+
+Usage typique : l'agent appelle Find Endpoint pour trouver la bonne route et ses champs, puis appelle Execute Endpoint avec les valeurs choisies.
 
 ## Contribuer
 

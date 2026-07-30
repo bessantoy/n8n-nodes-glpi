@@ -8,4 +8,10 @@ function copyEndpointIndex() {
 	return src('resources/glpi-endpoints-index.json').pipe(dest('dist/nodes/Glpi/resources'));
 }
 
-exports['build:icons'] = series(buildIcons, copyEndpointIndex);
+// GlpiFindEndpoint's SearchEngine reuses Glpi/EndpointIndex.js for the endpoints
+// themselves, but needs its own copy of the schemas index (bodyFields lookup).
+function copySchemasIndex() {
+	return src('resources/glpi-schemas-index.json').pipe(dest('dist/nodes/GlpiFindEndpoint/resources'));
+}
+
+exports['build:icons'] = series(buildIcons, copyEndpointIndex, copySchemasIndex);
